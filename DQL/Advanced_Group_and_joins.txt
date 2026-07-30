@@ -1,0 +1,177 @@
+CREATE TABLE stations (
+station_id INT PRIMARY KEY,
+station_name VARCHAR(50),
+zone VARCHAR(20),
+capacity INT,
+opened_year INT
+);
+CREATE TABLE rides (
+ride_id INT PRIMARY KEY,
+station_id INT,
+rider_type VARCHAR(20),
+ride_date DATE,
+duration_min INT,
+distance_km DECIMAL(4,1),
+fare DECIMAL(6,2),
+FOREIGN KEY (station_id) REFERENCES stations(station_id)
+);
+
+
+Quetion 1
+From the rides table, show each rider_type along with the total number of rides taken and the total fare collected.
+Include only those rider types that have taken more than 7 rides. Name the output columns rider_type, total_rides
+and total_fare, and sort the result by total_fare in descending order
+
+## query
+
+select rider_type count(*) as total_rides ,sum(fare)as total_fare from rides
+group by rider_type
+having total rides > 7
+order by total_fare desc;
+
+Question 2
+For every station_id in the rides table, display the number of rides and the average ride duration rounded to 2
+decimal places. Show only those stations whose average duration is greater than 30 minutes. Name the output
+columns station_id, ride_count and avg_duration, and sort the result by avg_duration in descending order.
+ 
+
+ ## Query
+ select station_id,count(*),round(avg(duration_min),2) as avg_duration   From rides
+ group by station_id
+ having avg_duration > 30;
+
+Question 3
+Group the rides by the month of ride_date and display the month number, the number of rides in that month, and
+the total distance covered rounded to 1 decimal place. Show only the months where the total distance is greater than
+30 km. Name the output columns ride_month, total_rides and total_distance, and sort by ride_month in ascending
+order.
+
+## Query
+
+select month(ride_type), count(*)as total_ride ,round(sum(distance_km)) as total_distance from rides
+group by month(ride_date)as ride_month
+having total_distance > 30
+order by ride_month ;
+
+Quetions 4
+
+For each rider_type, display the longest ride duration, the shortest ride duration and the average ride duration
+rounded to 2 decimal places. Include only those rider types whose longest ride is 50 minutes or more. Name the
+output columns rider_type, longest_ride, shortest_ride and avg_ride, and sort by longest_ride in descending order.
+
+## Query
+
+select ride_type, max(duration_min) as longeset_ride , min(duration_min) as smallest_ride, round(avg(duration_min),2) as avg_ride
+from  rides
+group by ride_type
+having longeset_ride > 50
+order by longeset_ride desc;
+
+
+
+Questions 5
+Group the rides by station_id and rider_type together. For each combination, display the number of rides and the
+total distance rounded to 1 decimal place. Show only the combinations where the total distance is greater than 10
+km. Name the output columns station_id, rider_type, ride_count and total_distance, and sort by station_id in
+ascending order.
+
+##Query
+
+select station_id , ride_type , count(*) as ride_count ,round(sum(distance_km ),1) as total_distance
+from rides
+group by station_id,rider_type
+having total_distance > 10
+order by station_id ;
+
+
+Quustion 6
+Find the stations that have been used by all three rider types (Member, Casual and Student). For each such station
+display the number of distinct rider types, the total number of rides and the average fare rounded to 2 decimal
+places. Name the output columns station_id, rider_type_count, total_rides and avg_fare, and sort by station_id in
+ascending order.
+
+## Qeury
+
+select station_id, count(distinct(rider_type))as rider_type, count(*) as total_ride, round(avg(fare),2) as avg_fare
+from rides
+group by station_id
+order by station_di
+
+
+Question 7
+List every station in the stations table along with the details of its June 2024 rides — ride_id, rider_type and fare.
+Stations that had no ride in June 2024 must still appear in the result with NULL values in the ride columns. Name the
+output columns station_id, station_name, zone, ride_id, rider_type and fare, and sort by station_id and then ride_id
+
+## Query 
+select s.station_id, s.station_name, s.zone, r.ride_id,r.ride_type,r.fare from station as s 
+join  rides as r 
+on s.station_id  = r.station_id 
+where ride_date between "2024-06-01" and '2024-06-30' 
+order by station_id,ride_type 
+
+Question 8
+
+Produce a station-wise summary showing station_id, station_name, zone, the total number of rides started at that
+station and the total revenue collected. Every station must appear in the result — stations with no rides should show
+0 rides and 0.00 revenue instead of NULL. Name the output columns station_id, station_name, zone, total_rides and
+total_revenue, and sort by total_rides in descending order, then by station_id in ascending order.
+
+
+## Query 
+select s.station_id,s.station_s.name,zone, ifnull((count(r.ride_id),0)as total_ride , ifnull(sum(r.fare),"null") from station
+left join rides 
+on s.station_id = r.station_id 
+group by station_id,station_name,zone 
+order by total_ride desc,station_id  
+
+
+
+
+Question 9
+
+Explain what are the types of SQL language
+there are  the 4 types of sql languge
+1. DDL
+(DDL) is data definition language are use create the structure of table in database using command
+ 
+  => ALTER - add the data from table update
+  => drop  - drop complete table from database
+  => truncate - delete the data from only rows not delete complete table
+  => Create - create the table from database
+
+2. (DML) data manipulation language are use to manipulate the data from the table using command
+
+=> insert - insert the data from table
+=> update - update the data from table
+=> delete - delete the particular row
+
+3.(TCL) = Transaction control language it a type of sql language are control the all transaction
+=> rollback
+=> Grant
+
+4. (DQL) is data query language are use to extract the form table and database using  (select)
+
+=> select
+
+
+Question 10
+
+Explain what are joins in SQL and different types of joins with Vein diagram
+
+=> in sql join is a clause are use to join the two tables based on related columns there are different types of join sql
+
+1. left join = join the column  basis of left table
+2. right join = join the column from right table
+3. inner join = join the exact same relate column and unique
+4. self join = self is join and join  it self  column this is called self join
+4 .outer join = this join are join based on tow table and both data show
+ 
+
+
+
+
+
+
+
+ 
