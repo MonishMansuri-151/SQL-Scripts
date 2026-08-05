@@ -1,0 +1,163 @@
+Q1. Find all sales where the sale amount is higher than the overall average sale amount across all transactions.
+Display sale_id, product_category, salesperson, and sale_amount, sorted by sale_amount in descending order.
+
+-- query 
+select avg(sale_amount) from sales  
+
+-- sub query 
+select sale_id,product_category,salesperson, sale_amount from sales 
+where sale_amount > (select avg(sale_amount) from sales) 
+order by sale_amount desc; 
+
+Q2. Retrieve the complete details of the transaction that recorded the single highest sale amount 
+
+-- normal query 
+select max(sale_amount) from sales ;
+-- sub query 
+
+select * from sales where sale_amount = (select max(sale_amount) from sales );
+
+Q3. Find all sales made by the salesperson who has the highest total number of transactions. Display sale_id,
+salesperson, product_name, and sale_amount, sorted by sale_id. 
+
+select sale_id, salesperson, product_name, sale_amount
+from sales
+where salesperson = (
+    select salesperson
+    from sales
+    group by salesperson
+    order by count(*) desc
+    limit 1
+)
+order by sale_id;
+
+
+Q4. Find all sales of products that have been sold by more than 2 different salespersons. Display sale_id,
+product_name, salesperson, and sale_amount, sorted by sale_id. 
+
+select sale_id, product_name, salesperson, sale_amount
+from sales
+where product_name in (
+    select product_name
+    from sales
+    group by product_name
+    having count(distinct salesperson) > 2
+)
+order by sale_id;
+
+
+
+Q5. Find all sales from regions whose average sale amount is above the overall average sale amount of all regions.
+Display sale_id, product_category, salesperson, region, and sale_amount, sorted by sale_id.
+
+select sale_id, product_category, salesperson, region, sale_amount
+from sales
+where region in (
+    select region
+    from sales
+    group by region
+    having avg(sale_amount) >
+    (
+        select avg(sale_amount)
+        from sales
+    )
+)
+order by sale_id;
+
+Q6. Find all sales where the sale amount is higher than every individual sale amount in the 'Furniture' category.
+Display sale_id, product_name, product_category, and sale_amount, sorted by sale_id.
+
+select sale_id, product_name, product_category, sale_amount
+from sales
+where sale_amount > all
+(
+    select sale_amount
+    from sales
+    where product_category='Furniture'
+)
+order by sale_id;
+
+Q7. Find all sales where the individual sale amount is above the average sale amount of its own product category.
+
+Display sale_id, product_category, salesperson, and sale_amount, sorted by sale_id. 
+
+select sale_id, product_category, salesperson, sale_amount
+from sales s1
+where sale_amount >
+(
+    select avg(sale_amount)
+    from sales s2
+    where s2.product_category = s1.product_category
+)
+order by sale_id;
+
+Q8. For each salesperson, find the transaction where they recorded their personal highest sale amount. Display
+sale_id, salesperson, product_name, and sale_amount, sorted by sale_amount in descending order.
+
+select sale_id, salesperson, product_name, sale_amount
+from sales s1
+where sale_amount =
+(
+    select max(sale_amount)
+    from sales s2
+    where s1.salesperson = s2.salesperson
+)
+order by sale_amount desc;
+
+
+Q9. Find all sales where the sale amount exceeds the average sale amount of the salesperson who made that sale.
+Display sale_id, salesperson, product_category, and sale_amount, sorted by salesperson and then by sale_id.
+select sale_id, salesperson, product_category, sale_amount
+from sales s1
+where sale_amount >
+(
+    select avg(sale_amount)
+    from sales s2
+    where s1.salesperson = s2.salesperson
+)
+order by salesperson, sale_id;
+
+
+Q10. Find all sales where the quantity sold is greater than the average quantity sold in the same region. Display
+sale_id, product_category, salesperson, region, and quantity, sorted by sale_id.
+
+
+select sale_id,
+       product_category,
+       salesperson,
+       region,
+       quantity
+from sales s1
+where quantity >
+(
+    select avg(quantity)
+    from sales s2
+    where s1.region = s2.region
+)
+order by sale_id;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
