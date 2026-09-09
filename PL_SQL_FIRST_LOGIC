@@ -1,0 +1,19 @@
+DECLARE
+    num NUMBER := 1;
+BEGIN
+    WHILE num <= 20 LOOP
+
+        IF MOD(num, 2) = 0 AND MOD(num, 6) = 0 THEN
+            DBMS_OUTPUT.PUT_LINE(num || ' is divisible by 2 and 6');
+
+        ELSIF MOD(num, 2) = 0 OR MOD(num, 7) = 0 THEN
+            DBMS_OUTPUT.PUT_LINE(num || ' is divisible by 2 or 7');
+
+        ELSE
+            DBMS_OUTPUT.PUT_LINE(num || ' is not divisible by 2 or 7');
+        END IF;
+
+        num := num + 1;
+    END LOOP;
+END;
+/
