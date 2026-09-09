@@ -1,0 +1,27 @@
+
+DECLARE 
+          age number := 20;
+begin 
+    DBMS_OUTPUT.PUT_LINE(age);
+    DBMS_OUTPUT.PUT_LINE('hello all');
+
+    if (age = 20) then
+    
+          DBMS_OUTPUT.PUT_LINE('age right');
+    else 
+        DBMS_OUTPUT.PUT_LINE('age is wronge');
+    end if ;
+end;
+
+
+DECLARE 
+     num number := 1;
+begin 
+    while num < 20 LOOP
+        DBMS_OUTPUT.PUT_LINE('line no.'|| num);
+
+        num := num +1;
+    END LOOP;
+
+end;
+/
