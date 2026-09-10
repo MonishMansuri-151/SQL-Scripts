@@ -1,0 +1,20 @@
+create table emp2 as 
+SELECT employee_id,first_name from hr.employees
+fetch next 2 rows only ;
+
+
+declare 
+      -- v_name VARCHAR(20); -- is type ke vairable declare karne me ek badi mistake he agar ynha change karte he ham data type 
+      -- to error aa jayega 
+
+      -- new approch 
+      v_name emp2.FIRST_NAME%TYPE;
+
+
+BEGIN 
+    select FIRST_NAME into v_name from emp2 where EMPLOYEE_ID = 101;
+    dbms_output.put_line('first name is ');
+    dbms_output.put_line(v_name);
+
+
+end; 
