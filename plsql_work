@@ -1,0 +1,49 @@
+DECLARE 
+        val VARCHAR(20) := 'naman';
+        reverse_1 VARCHAR(20);
+begin
+
+    select reverse(val) into reverse_1 from DUAL;
+
+    if lower(val) = lower(reverse_1) then
+         dbms_output.PUT_LINE('stirng is palindrome');
+    else 
+         dbms_output.PUT_LINE('string is not palindrome');
+
+    end if;
+
+end;
+
+
+DECLARE 
+         num int := 1;
+BEGIN 
+        while num <= 600 LOOP
+            if MOD(num, 2 ) = 0 then 
+                dbms_output.PUT_LINE('prim number ' || ' ' || num);
+            
+            end if ;
+            num := num + 1 ;
+
+        end loop;
+   
+
+END;
+
+
+-------------------------------- cursor Pl/sql -------------------------------------------------------
+
+
+DECLARE
+    CURSOR emp_cur IS
+        SELECT employee_id, first_name
+        FROM emp2;
+
+BEGIN
+    FOR emp IN emp_cur LOOP
+        DBMS_OUTPUT.PUT_LINE(
+            emp.employee_id || ' ' || emp.first_name
+        );
+    END LOOP;
+END;
+/
