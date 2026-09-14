@@ -1,0 +1,39 @@
+DROP TABLE backup_1;
+
+CREATE TABLE backup_1 (
+    emp_id INT,
+    first_name VARCHAR(20),
+    action_date DATE
+);
+----  store the after insert main table backup also insert into infromaiton of insert 
+
+
+create table main (employee_id int , first_name VARCHAR(20));
+
+
+INSERT INTO main (employee_id, first_name)
+VALUES (404, 'monish');
+
+
+SELECT * from BACKUP_1;
+
+-- after insert the data from main table and trigger are hit and store the data in to backup table -----------------------------
+
+
+
+CREATE OR REPLACE TRIGGER new_trigger
+AFTER INSERT ON main
+FOR EACH ROW
+BEGIN
+    INSERT INTO backup_1 (
+        emp_id,
+        first_name,
+        action_date
+    )
+    VALUES (
+        :NEW.employee_id,
+        :NEW.first_name,
+        SYSDATE
+    );
+END;
+/
