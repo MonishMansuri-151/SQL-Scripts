@@ -465,7 +465,139 @@ from orders as o where o.status <> "CANCELLED";
 -- Expected output: Expected output: customer_id, order_id, order_date, latest_order_date.
 -- Hint: LAST_VALUE often needs an explicit frame ending at UNBOUNDED FOLLOWING.
 SELECT customer_id,order_id,order_date, last_value(order_date) over(partition by customer_id ORDER BY order_date, order_id rows between current row and unbounded following ) as latest_Date
- from orders 
+ from orders WHERE status <> 'CANCELLED';
+ 
+--  Q36. Window — PERCENT_RANK (Advanced)
+-- Calculate the percent rank of every product's price within its category.
+-- Expected output: Expected output: product_name, category, price, percent_rank between 0 and 1.
+-- Hint: Use PERCENT_RANK() OVER (PARTITION BY category ORDER BY price). 
+
+select product_name,category,price,percent_rank() over(partition by category order by price ) as percent_ranks from products;
+
+
+-- Q38. Window — multi-level filtering (Advanced)
+-- Return the highest-revenue order for each customer, including ties.
+-- Expected output: Expected output: customer_id, order_id, order_value for all orders tied for each customer's maximum.
+-- Hint: Use DENSE_RANK or RANK over order_value DESC, then filter rank = 1.
+with cte3 as
+(select o.customer_id,o.order_id, (oi.quantity * oi.unit_price) as order_value
+from orders as o join order_items as oi 
+on oi.order_id = o.order_id )
+
+select * from 
+(select customer_id,order_id,order_value,dense_rank() over(partition by customer_id order by order_value desc) as revenue_rank from cte3) as t 
+where revenue_rank = 1;
+
+
+-- 39. Correlated subquery — greater than category average (Advanced)
+-- Find products whose price is greater than the average price of their own category, without using a CTE.
+-- Expected output: Expected output: product_name, category, price, category average.
+-- Hint: Correlate the inner AVG query using category
+
+select p.product_name,p.category,p.price,(select avg(price) from products as p1 where p.category = p1.category) as avg_category
+ from  products as p where price > (select avg(price) from products as p1 where p.category = p1.category);
+
+
+-- Q40. Multi-row subquery — ALL (Advanced)
+-- Find products whose price is greater than ALL prices of products in the Stationery category.
+-- Expected output: Expected output: products more expensive than every Stationery product.
+-- Hint: Use > ALL (subquery)
+
+
+select * from products where price >all (select price from products  where category = "Stationery");
+
+-- Q41. Multi-row subquery — ANY (Advanced)
+-- Find products whose price is greater than ANY price of products in the Lifestyle category.
+-- Expected output: Expected output: products priced above at least one Lifestyle product.
+-- Hint: Use > ANY (subquery); understand ANY vs ALL. 
+
+select * from products where price > any  (select price from products where category = "Lifestyle");
+
+-- Q42. EXISTS + correlated logic (Advanced)
+-- Find customers who have at least one delivered order whose net value is greater than that customer's average
+-- non-cancelled order value.
+-- Expected output: Expected output: customer rows satisfying the condition.
+-- Hint: The EXISTS subquery must calculate a customer-specific average and compare it to the candidate order. 
+
+SELECT c.customer_name
+FROM customers AS c
+WHERE EXISTS (
+    SELECT 1
+    FROM orders AS o
+    WHERE o.customer_id = c.customer_id
+      AND o.status = 'DELIVERED'
+      AND (
+          SELECT SUM(oi.unit_price * oi.quantity)
+          FROM order_items AS oi
+          WHERE oi.order_id = o.order_id
+      ) > (
+          SELECT AVG(order_total)
+          FROM (
+              SELECT o2.order_id,
+                     SUM(oi2.unit_price * oi2.quantity) AS order_total
+              FROM orders AS o2
+              JOIN order_items AS oi2
+                ON oi2.order_id = o2.order_id
+              WHERE o2.customer_id = c.customer_id
+                AND o2.status <> 'CANCELLED'
+              GROUP BY o2.order_id
+          ) AS customer_orders
+      )
+);
+
+-- Q43. CTE — recursive (Advanced)
+-- Generate integers 1 through 12 using a recursive CTE, then map them to month numbers and month names.
+-- Expected output: Expected output: n, month_name for January through December.
+-- Hint: Use WITH RECURSIVE and stop recursion at 12. 
+
+
+
+WITH RECURSIVE cte_name AS (
+    -- Anchor query
+    select 1 as n
+    
+
+    UNION
+select n+1  from cte_name 
+where n < 12)
+    -- Recursive query
+select n, MONTHNAME(STR_TO_DATE(CONCAT(n, '-01'), '%m-%d')) as month_name from cte_name ;
+
+
+
+select * from customers;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+ 
+ 
+ 
 
 
 
